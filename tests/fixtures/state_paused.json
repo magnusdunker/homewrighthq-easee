@@ -1,0 +1,13 @@
+{
+  "smartCharging": false,
+  "cableLocked": true,
+  "chargerOpMode": 2,
+  "totalPower": 0.0,
+  "sessionEnergy": 3.1,
+  "isOnline": true,
+  "dynamicChargerCurrent": 0.0,
+  "outputCurrent": 0.0,
+  "voltage": 230.9,
+  "lifetimeEnergy": 1210.0,
+  "reasonForNoCurrent": 52
+}

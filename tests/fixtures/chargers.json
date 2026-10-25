@@ -1,0 +1,22 @@
+[
+  {
+    "id": "EH123456",
+    "name": "Carport",
+    "color": 1,
+    "createdOn": "2023-04-12T09:31:02.123456",
+    "updatedOn": "2025-11-02T18:00:41.000000",
+    "backPlate": { "id": "B1A2C3", "masterBackPlateId": "B1A2C3" },
+    "levelOfAccess": 1,
+    "productCode": 1
+  },
+  {
+    "id": "EH654321",
+    "name": "Garage",
+    "color": 2,
+    "createdOn": "2024-01-03T11:00:00.000000",
+    "updatedOn": "2025-10-30T07:12:10.000000",
+    "backPlate": null,
+    "levelOfAccess": 1,
+    "productCode": 1
+  }
+]

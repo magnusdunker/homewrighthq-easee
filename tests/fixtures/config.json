@@ -1,0 +1,22 @@
+{
+  "isEnabled": true,
+  "lockCablePermanently": false,
+  "authorizationRequired": false,
+  "remoteStartRequired": true,
+  "smartButtonEnabled": false,
+  "wiFiSSID": "Hjemme",
+  "detectedPowerGridType": 1,
+  "offlineChargingMode": 0,
+  "circuitMaxCurrentP1": 32.0,
+  "circuitMaxCurrentP2": 32.0,
+  "circuitMaxCurrentP3": 32.0,
+  "enableIdleCurrent": false,
+  "limitToSinglePhaseCharging": false,
+  "phaseMode": 2,
+  "localNodeType": 1,
+  "localAuthorizationRequired": false,
+  "localRadioForAuthorizationRequired": false,
+  "ledStripBrightness": 70,
+  "maxChargerCurrent": 16.0,
+  "chargingSchedule": null
+}

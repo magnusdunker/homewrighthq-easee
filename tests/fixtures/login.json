@@ -1,0 +1,7 @@
+{
+  "accessToken": "ACCESS-1",
+  "expiresIn": 86400,
+  "accessClaims": ["User"],
+  "tokenType": "Bearer",
+  "refreshToken": "REFRESH-1"
+}
