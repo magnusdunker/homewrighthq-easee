@@ -1,74 +1,74 @@
-# Easee til HomewrightHQ
+# Easee for HomewrightHQ
 
-En ekstern integration til [HomewrightHQ](https://github.com/magnusdunker/homewrighthq) for Easee-ladebokse (Easee Home og Easee Charge) gennem Easees cloud.
+An external integration for [HomewrightHQ](https://github.com/magnusdunker/homewrighthq) for Easee chargers (Easee Home and Easee Charge) through Easee's cloud.
 
 ## Installation
 
-I HomewrightHQ: **Indstillinger → Integrationer → Fra GitHub**. Indsæt
+In HomewrightHQ: **Settings → Integrations → From GitHub**. Paste
 
 ```
 https://github.com/magnusdunker/homewrighthq-easee
 ```
 
-og tryk **Installér**. Tilføj derefter **Easee** under **Tilføj integration**, og log ind med det brugernavn (e-mail eller telefonnummer) og den adgangskode, du bruger i Easee-appen.
+and press **Install**. Then add **Easee** under **Add integration**, and log in with the username (email or phone number) and password you use in the Easee app.
 
-## Hvad du får
+## What you get
 
-Hver ladeboks bliver en enhed med:
+Each charger becomes a device with:
 
-- status: `offline`, `disconnected`, `awaiting_start`, `charging`, `completed`, `error`, `ready_to_charge`, `awaiting_authorization` eller `de_authorizing`
-- effekt i W
-- energi i den aktuelle ladning og energi i alt, i kWh
-- om ladeboksen er forbundet til Easees cloud
-- en kontakt **Opladning**: tænd starter ladningen eller fortsætter en ladning på pause, sluk sætter den på pause
-- en indstilling **Dynamisk strømgrænse** i ampere, fra 0 til ladeboksens maksimale strøm
+- status: `offline`, `disconnected`, `awaiting_start`, `charging`, `completed`, `error`, `ready_to_charge`, `awaiting_authorization` or `de_authorizing`
+- power in W
+- energy in the current charging session and total energy, in kWh
+- whether the charger is connected to Easee's cloud
+- a switch **Opladning** (charging): on starts charging or resumes a paused session, off pauses it
+- a setting **Dynamisk strømgrænse** (dynamic current limit) in amperes, from 0 to the charger's maximum current
 
-Der er to tjenester til automationer:
+There are two services for automations:
 
-- `easee.set_charging_current` med `current` (ampere) sætter den dynamiske strømgrænse. 0 A holder ladningen tilbage uden at afslutte den.
-- `easee.send_command` med `command` (`start`, `stop`, `pause` eller `resume`).
+- `easee.set_charging_current` with `current` (amperes) sets the dynamic current limit. 0 A holds charging back without ending the session.
+- `easee.send_command` with `command` (`start`, `stop`, `pause` or `resume`).
 
-Begge tager en entity fra ladeboksen som mål, eller `charger_id` (f.eks. `EH123456`). Har kontoen kun én ladeboks, kan begge udelades.
+Both take an entity from the charger as target, or `charger_id` (e.g. `EH123456`). If the account has only one charger, both can be left out.
 
-Et eksempel, der lader i de billige timer: en automation sætter `current` til 16 A, når elprisen er lav, og til 0 A, når den er høj.
+An example that charges in the cheap hours: an automation sets `current` to 16 A when the electricity price is low, and to 0 A when it is high.
 
-## Opdatering og Easees grænser
+## Updates and Easee's limits
 
-Integrationen læser hver ladeboks hvert minut og konfigurationen (den maksimale strøm) en gang i timen. Under **Indstillinger** på integrationen kan tiden mellem opdateringer sættes fra 30 til 600 sekunder. Svarer Easee 429 (for mange forespørgsler), holder integrationen pause i fem minutter, eller så længe Easee beder om. Efter en kommando viser integrationen den forventede tilstand med det samme og læser ladeboksen igen efter 10 sekunder.
+The integration reads each charger every minute and the configuration (the maximum current) once an hour. Under **Options** on the integration, the time between updates can be set from 30 to 600 seconds. If Easee answers 429 (too many requests), the integration pauses for five minutes, or as long as Easee asks. After a command the integration shows the expected state right away and reads the charger again after 10 seconds.
 
-Adgangsnøglen fornyes med Easees refresh-token. Lykkes det ikke, logger integrationen ind igen med brugernavn og adgangskode. Afviser Easee dem, oprettes et problem, og integrationen skal godkendes igen.
+The access token is renewed with Easee's refresh token. If that fails, the integration logs in again with username and password. If Easee rejects them, a repair issue is created, and the integration must be authorized again.
 
-## Ikke afprøvet
+## Not tested
 
-Integrationen er skrevet ud fra Easees offentlige API-beskrivelse og pyeasee, som Home Assistants Easee-integration bruger, og afprøvet mod en falsk Easee med svar formet som de rigtige. Intet af det følgende er kontrolleret mod en rigtig ladeboks eller Easees rigtige API:
+The integration is written from Easee's public API description and pyeasee, which Home Assistant's Easee integration uses, and tested against a fake Easee with responses shaped like the real ones. None of the following is checked against a real charger or Easee's real API:
 
-- Login (`POST /api/accounts/login` med `userName` og `password`) og fornyelse (`POST /api/accounts/refresh_token` med `accessToken` og `refreshToken`), feltnavnene `accessToken`, `refreshToken` og `expiresIn`, og at forkert adgangskode giver HTTP 400.
-- Listen over ladebokse (`GET /api/chargers`) med felterne `id` og `name`.
-- Tilstanden (`GET /api/chargers/{id}/state`) med `chargerOpMode`, `totalPower` (antaget i kW), `sessionEnergy`, `lifetimeEnergy`, `dynamicChargerCurrent` og `isOnline`.
-- Koderne for `chargerOpMode` 0 til 8 og deres betydning.
-- Konfigurationen (`GET /api/chargers/{id}/config`) med `maxChargerCurrent`. Mangler den, bruges 32 A som øvre grænse.
-- Kommandoerne `POST /api/chargers/{id}/commands/start_charging`, `stop_charging`, `pause_charging` og `resume_charging`, og at de svarer 200 eller 202.
-- Den dynamiske strøm med `POST /api/chargers/{id}/settings` og `dynamicChargerCurrent`, og at 0 A holder ladningen tilbage.
-- Hvor ofte Easee tillader forespørgsler, og om Easee sender `Retry-After`. Et minut er et forsigtigt gæt.
+- Login (`POST /api/accounts/login` with `userName` and `password`) and renewal (`POST /api/accounts/refresh_token` with `accessToken` and `refreshToken`), the field names `accessToken`, `refreshToken` and `expiresIn`, and that a wrong password gives HTTP 400.
+- The list of chargers (`GET /api/chargers`) with the fields `id` and `name`.
+- The state (`GET /api/chargers/{id}/state`) with `chargerOpMode`, `totalPower` (assumed to be in kW), `sessionEnergy`, `lifetimeEnergy`, `dynamicChargerCurrent` and `isOnline`.
+- The codes for `chargerOpMode` 0 to 8 and what they mean.
+- The configuration (`GET /api/chargers/{id}/config`) with `maxChargerCurrent`. If it is missing, 32 A is used as the upper limit.
+- The commands `POST /api/chargers/{id}/commands/start_charging`, `stop_charging`, `pause_charging` and `resume_charging`, and that they answer 200 or 202.
+- The dynamic current with `POST /api/chargers/{id}/settings` and `dynamicChargerCurrent`, and that 0 A holds charging back.
+- How often Easee allows requests, and whether Easee sends `Retry-After`. One minute is a cautious guess.
 
-Strømgrænsen for et helt kredsløb (`POST /api/sites/{siteId}/circuits/{circuitId}/settings` med `dynamicCircuitCurrentP1` til `P3`) er ikke med, og heller ikke Easees SignalR-strøm med tilstand i realtid.
+The current limit for a whole circuit (`POST /api/sites/{siteId}/circuits/{circuitId}/settings` with `dynamicCircuitCurrentP1` to `P3`) is not included, and neither is Easee's SignalR stream with real-time state.
 
-## Udvikling
+## Development
 
-Bygget i Rust på SDK'en `thehome-plugin` fra [homewright-example-integration-rust](https://github.com/magnusdunker/homewrighthq-example-integration-rust).
+Built in Rust on the `thehome-plugin` SDK from [homewright-example-integration-rust](https://github.com/magnusdunker/homewrighthq-example-integration-rust).
 
-- `src/api.rs`: login, tokens og Easees API
-- `src/model.rs`: Easees data og hvordan de bliver til tilstande og kommandoer
-- `src/lib.rs`: forbindelsen til HomewrightHQ
-- `tests/easee.rs`: tests mod en falsk Easee med svarene i `tests/fixtures`, og en falsk HomewrightHQ i `tests/host`
+- `src/api.rs`: login, tokens and Easee's API
+- `src/model.rs`: Easee's data and how it becomes states and commands
+- `src/lib.rs`: the connection to HomewrightHQ
+- `tests/easee.rs`: tests against a fake Easee with the responses in `tests/fixtures`, and a fake HomewrightHQ in `tests/host`
 
 ```
 cargo test
 cargo build --release
 ```
 
-En ny version udgives med et tag, f.eks. `git tag v0.1.0 && git push origin v0.1.0`. Workflowet bygger til Windows, Linux (x86_64 og arm64, statisk musl) og macOS og lægger binærerne og `homewright.json` på releasen.
+A new version is released with a tag, e.g. `git tag v0.1.0 && git push origin v0.1.0`. The workflow builds for Windows, Linux (x86_64 and arm64, static musl) and macOS and puts the binaries and `homewright.json` on the release.
 
-## Licens
+## License
 
 MIT
